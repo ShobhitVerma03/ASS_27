@@ -23,7 +23,9 @@ pipeline {
             steps {
                 script {
                     echo 'Cleaning up existing containers...'
-                    bat "${DOCKER_COMPOSE} down --remove-orphans"
+                    bat "docker rm -f mongodb blog-server blog-client || exit /b 0"
+                    bat "docker volume rm assign27_mongodb_data || exit /b 0"
+                    bat "${DOCKER_COMPOSE} down -v --remove-orphans || exit /b 0"
                     echo 'Starting Docker Compose Build and Deploy...'
                     // Build and run in detached mode
                     bat "${DOCKER_COMPOSE} up --build -d"
