@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  server:
+    build: ./server
+    container_name: blog-server
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/blog_relation_demo
+    depends_on:
+      - mongodb
+
+  client:
+    build:
+      context: ./client
+      args:
+        - VITE_API_URL=http://localhost:5000
+    container_name: blog-client
+    ports:
+      - "8081:80"
+    depends_on:
+      - server
+
+volumes:
+  mongodb_data:
